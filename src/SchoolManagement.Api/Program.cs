@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using SchoolManagement.Api.Common.Errors;
 using SchoolManagement.Application;
 using SchoolManagement.Infrastructure;
 
@@ -9,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services
         .AddApplication()
         .AddInfrastructure(builder.Configuration);
-    //builder.Services.AddSingleton<ProblemDetailsFactory, SchoolManagementProblemDetailsFactory>();
+    builder.Services.AddSingleton<ProblemDetailsFactory, SchoolManagementProblemDetailsFactory>();
 }
 
 var app = builder.Build();

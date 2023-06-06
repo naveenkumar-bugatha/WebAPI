@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SchoolManagement.Application.Services.Authentication;
 using SchoolManagement.Contracts.Authentication;
+using SchoolManagement.Domain.Errors;
 
 namespace SchoolManagement.Api.Controllers
 {
     [Route("api/auth")]
-    [ApiController]
-    public class AuthenticationController : ControllerBase
+    public class AuthenticationController : ApiController
     {
         private readonly IAuthenticationService _authenticationService;
 
@@ -24,29 +24,34 @@ namespace SchoolManagement.Api.Controllers
                 registerRequest.Email,
                 registerRequest.Password);
 
-            var response = new AuthenticationResponse(
-                authResult.Id,
-                authResult.FirstName,
-                authResult.LastName,
-                authResult.Email,
-                authResult.Token);
-
-            return Ok(response);
+            return authResult.Match(
+                authResult => Ok(AuthResponse(authResult)),
+                errors => Problem(errors));
         }
 
         [HttpPost("login")]
         public IActionResult Login(LoginRequest loginRequest)
         {
-            var loginResult = _authenticationService.Login(loginRequest.Email, loginRequest.Password);
+            var authResult = _authenticationService.Login(loginRequest.Email, loginRequest.Password);
 
-            var response = new AuthenticationResponse(
-                loginResult.Id,
-                loginResult.FirstName,
-                loginResult.LastName,
-                loginResult.Email,
-                loginResult.Token);
+            if (authResult.IsError && authResult.FirstError == Errors.Authentication.InvalidCredentials)
+            {
+                return Problem(statusCode: StatusCodes.Status401Unauthorized, title: authResult.FirstError.Description);
+            }
 
-            return Ok(response);
+            return authResult.Match(
+                authResult => Ok(AuthResponse(authResult)),
+                errors => Problem(errors));
+        }
+
+        private static AuthenticationResponse AuthResponse(AuthenticationResult authResult)
+        {
+            return new AuthenticationResponse(
+                            authResult.Id,
+                            authResult.FirstName,
+                            authResult.LastName,
+                            authResult.Email,
+                            authResult.Token);
         }
     }
 }
