@@ -8,3 +8,4 @@ namespace SchoolManagement.Application.Common.Interfaces.Persistence
         void AddUser(User user);
     }
 }
+

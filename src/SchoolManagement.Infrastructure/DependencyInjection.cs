@@ -12,7 +12,7 @@ using System.Text;
 namespace SchoolManagement.Infrastructure;
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services,    
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services,
         ConfigurationManager configurationManager)
     {
         var JwtSettings = new JwtSettings();
@@ -34,6 +34,7 @@ public static class DependencyInjection
                     Encoding.UTF8.GetBytes(JwtSettings.Secret))
             });
         services.AddSingleton<IUserRepository, UserRepository>();
+        services.AddSingleton<IStudentRepository, StudentRepository>();
         return services;
     }
 }
