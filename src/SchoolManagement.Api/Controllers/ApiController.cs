@@ -1,9 +1,11 @@
 ﻿using ErrorOr;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SchoolManagement.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     public class ApiController : Controller
     {
         protected IActionResult Problem(List<Error> errors)

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SchoolManagement.Application.Services.Authentication;
 using SchoolManagement.Contracts.Authentication;
 using SchoolManagement.Domain.Errors;
@@ -6,6 +7,7 @@ using SchoolManagement.Domain.Errors;
 namespace SchoolManagement.Api.Controllers
 {
     [Route("api/auth")]
+    [AllowAnonymous]
     public class AuthenticationController : ApiController
     {
         private readonly IAuthenticationService _authenticationService;
