@@ -39,7 +39,7 @@ namespace SchoolManagement.Api.Controllers
             return Ok(students);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public ActionResult<Student> Update(Student student)
         {
             var updatedStudent = _studentService.UpdateStudent(student);
