@@ -54,8 +54,16 @@ namespace SchoolManagement.Api.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            _studentService.DeleteStudent(id);
-            return NoContent();
+            try
+            {
+                _studentService.DeleteStudent(id);
+                return NoContent();
+            }
+            catch
+            {
+                return NotFound();
+            }
+
         }
     }
 
