@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SchoolManagement.Application.Common.Interfaces.Persistence;
-using SchoolManagement.Application.Services.Authentication;
+using MediatR;
+using System.Reflection;
 
 namespace SchoolManagement.Application;
 public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddMediatR(config => config.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
         return services;
     }
 }

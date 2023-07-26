@@ -1,4 +1,4 @@
-namespace SchoolManagement.UnitTests;
+namespace SchoolManagement.Application.UnitTests;
 
 public class UnitTest1
 {

@@ -1,4 +1,4 @@
-﻿namespace SchoolManagement.Application.Services.Authentication
+﻿namespace SchoolManagement.Application.Authentication.Common
 {
     public record AuthenticationResult
     (

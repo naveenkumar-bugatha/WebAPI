@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MapsterMapper;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SchoolManagement.Application.Services.Authentication;
+using SchoolManagement.Application.Authentication.Commands.Register;
+using SchoolManagement.Application.Authentication.Common;
+using SchoolManagement.Application.Authentication.Queries.Login;
 using SchoolManagement.Contracts.Authentication;
 using SchoolManagement.Domain.Errors;
 
@@ -10,31 +14,32 @@ namespace SchoolManagement.Api.Controllers
     [AllowAnonymous]
     public class AuthenticationController : ApiController
     {
-        private readonly IAuthenticationService _authenticationService;
+        private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
 
-        public AuthenticationController(IAuthenticationService authenticationService)
+        public AuthenticationController(
+            IMediator mediator, IMapper mapper)
         {
-            _authenticationService = authenticationService;
+            _mediator = mediator;
+            _mapper = mapper;
         }
 
         [HttpPost("register")]
-        public IActionResult Register(RegisterRequest registerRequest)
+        public async Task<IActionResult> Register(RegisterRequest registerRequest)
         {
-            var authResult = _authenticationService.Register(
-                registerRequest.FirstName,
-                registerRequest.LastName,
-                registerRequest.Email,
-                registerRequest.Password);
+            var command = _mapper.Map<RegisterCommand>(registerRequest);
+            var authResult = await _mediator.Send(command);
 
             return authResult.Match(
-                authResult => Ok(AuthResponse(authResult)),
+                authResult => Ok(_mapper.Map<AuthenticationResponse>(authResult)),
                 errors => Problem(errors));
         }
 
         [HttpPost("login")]
-        public IActionResult Login(LoginRequest loginRequest)
+        public async Task<IActionResult> Login(LoginRequest loginRequest)
         {
-            var authResult = _authenticationService.Login(loginRequest.Email, loginRequest.Password);
+            var query = _mapper.Map<LoginQuery>(loginRequest);
+            var authResult = await _mediator.Send(query);
 
             if (authResult.IsError && authResult.FirstError == Errors.Authentication.InvalidCredentials)
             {
@@ -42,7 +47,7 @@ namespace SchoolManagement.Api.Controllers
             }
 
             return authResult.Match(
-                authResult => Ok(AuthResponse(authResult)),
+                authResult => Ok(_mapper.Map<AuthenticationResponse>(authResult)),
                 errors => Problem(errors));
         }
 
